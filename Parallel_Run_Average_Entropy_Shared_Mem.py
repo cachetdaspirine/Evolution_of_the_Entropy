@@ -5,8 +5,10 @@ import sys
 import queue
 import copy
 sys.path.append('/home/hcleroy/PostDoc/aging_condensates/Simulation/Gillespie/Gillespie_backend/')
+sys.path.append('/home/hugo/PostDoc/aging_condensates/Gillespie/Gillespie_backend/')
 import Gillespie_backend as gil
 sys.path.append('/home/hcleroy/PostDoc/aging_condensates/Simulation/Gillespie/Analysis/')
+sys.path.append('/home/hugo/PostDoc/aging_condensates/Gillespie/Analysis/')
 from ToolBox import *
 def weighted_average_entropy(Gil, step_tot, compute_steps):
     """
