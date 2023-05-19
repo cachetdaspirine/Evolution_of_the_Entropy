@@ -64,6 +64,7 @@ def run_simulation_with_shared_results(q, shared_mem_array, shape,shared_count, 
     """
     while True:
         try:
+            # the block = False means that the process wont wait for a argument to com in the queue
             args =q.get(block=False) # extract an element from the queue to run the simulation
         except queue.Empty: # once the queue is empty break the loop
             break
