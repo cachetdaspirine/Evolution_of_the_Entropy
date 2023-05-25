@@ -124,6 +124,7 @@ def average_simulations( args, step_tot, compute_steps):
     processes = []
     for _ in range(mp.cpu_count()):
         p = mp.Process(target=run_simulation_with_shared_results, args=(q, shared_mem_array, shape,shared_count, step_tot, compute_steps, lock))
+        p.daemon = True
         p.start()
         processes.append(p)
     for p in processes:
