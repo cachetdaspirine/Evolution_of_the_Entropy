@@ -10,10 +10,10 @@ import Gillespie_backend as gil
 sys.path.append('/home/hcleroy/PostDoc/aging_condensates/Simulation/Gillespie/Analysis/')
 sys.path.append('/home/hugo/PostDoc/aging_condensates/Gillespie/Analysis/')
 from ToolBox import *
-def weighted_average_entropy(Gil, step_tot, compute_steps):
+def weighted_average_energy(Gil, step_tot, compute_steps):
     """
     Compute the evolution of a Gillespie object over `step_tot` steps, and 
-    compute the weighted average of the entropy every `compute_steps`.
+    compute the weighted average of the energy every `compute_steps`.
     
     Parameters:
     Gil (Gillespie): The Gillespie object to evolve
@@ -22,16 +22,16 @@ def weighted_average_entropy(Gil, step_tot, compute_steps):
 
     Returns:
     array: a 2D numpy array of shape (step_tot//compute_steps,2) where the first column is the time drawn, and the second 
-        is the entropy averaged over the compute_steps steps.
+        is the energy averaged over the compute_steps steps.
     float: The percentage of moves where move == 1
     """
     current_time = 0
     total_weight = 0
-    prev_entropy = Gil.get_S()
+    prev_energy = Gil.get_F()
     bound_linkers = 0
     results = np.zeros((step_tot//compute_steps,2),dtype=float)
     move_1_count = 0
-    weighted_entropy = 0
+    weighted_energy = 0
 
     for step in range(1, step_tot + 1):
         move, time = Gil.evolve()
@@ -40,13 +40,15 @@ def weighted_average_entropy(Gil, step_tot, compute_steps):
         current_time += time
         if move == 1:
             move_1_count += 1
-        weighted_entropy += (prev_entropy-Gil.ell_tot*np.log(np.pi*4)) * time
+        #weighted_entropy += (prev_entropy-Gil.ell_tot*np.log(np.pi*4)) * time
+        weighted_energy += ((prev_energy-(Gil.binding_energy * (Gil.get_N_loop()-1)- MinEnt(Gil.Nlinker,Gil.ell_tot)))/
+                                                (Gil.ell_tot*np.log(4*np.pi)-MinEnt(Gil.Nlinker,Gil.ell_tot))) * time
         total_weight += time
-        prev_entropy = Gil.get_S()
+        prev_energy = Gil.get_F()
         if step % compute_steps == 0:
-            weighted_entropy = weighted_entropy/total_weight
-            results[(step-1)//compute_steps] = [current_time, weighted_entropy]
-            weighted_entropy =0.
+            weighted_energy = weighted_energy/total_weight
+            results[(step-1)//compute_steps] = [current_time, weighted_energy]
+            weighted_energy =0.
             total_weight = 0.
 
     return results, (move_1_count / step_tot) * 100
@@ -79,7 +81,7 @@ def run_simulation_with_shared_results(q, shared_mem_array, shape,shared_count, 
         Gil = gil.Gillespie(ell_tot=ell_tot, rho0=0., BindingEnergy=Energy, kdiff=kdiff,
                             seed=seed, sliding=False, Nlinker=Nlinker, old_gillespie=None, dimension=dimension)
         # make the simulation and store the resutls
-        results, move_1_percentage = weighted_average_entropy(Gil, step_tot, compute_steps)
+        results, move_1_percentage = weighted_average_energy(Gil, step_tot, compute_steps)
 
         # Access the shared memory and wrap it as a numpy array
         shared_mem = shared_memory.SharedMemory(name=shared_mem_array.name)
