@@ -41,8 +41,9 @@ def weighted_average_energy(Gil, step_tot, compute_steps):
         if move == 1:
             move_1_count += 1
         #weighted_entropy += (prev_entropy-Gil.ell_tot*np.log(np.pi*4)) * time
-        weighted_energy += ((prev_energy-(Gil.binding_energy * (Gil.get_N_loop()-1)- MinEnt(Gil.Nlinker,Gil.ell_tot)))/
-                                                (Gil.ell_tot*np.log(4*np.pi)-MinEnt(Gil.Nlinker,Gil.ell_tot))) * time
+        #weighted_energy += ((prev_energy-(Gil.binding_energy * (Gil.get_N_loop()-1)- MinEnt(Gil.Nlinker,Gil.ell_tot)))/
+        #                                        (Gil.ell_tot*np.log(4*np.pi)-MinEnt(Gil.Nlinker,Gil.ell_tot))) * time
+        weighted_energy +=prev_energy*time
         total_weight += time
         prev_energy = Gil.get_F()
         if step % compute_steps == 0:
