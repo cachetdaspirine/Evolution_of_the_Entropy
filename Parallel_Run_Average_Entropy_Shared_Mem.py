@@ -6,9 +6,11 @@ import queue
 import copy
 sys.path.append('/home/hcleroy/PostDoc/aging_condensates/Simulation/Gillespie/Gillespie_backend/')
 sys.path.append('/home/hugo/PostDoc/aging_condensates/Gillespie/Gillespie_backend/')
+sys.path.append('/home/hcleroy/aging_condensate/Gillespie/Gillespie_backend')
 import Gillespie_backend as gil
 sys.path.append('/home/hcleroy/PostDoc/aging_condensates/Simulation/Gillespie/Analysis/')
 sys.path.append('/home/hugo/PostDoc/aging_condensates/Gillespie/Analysis/')
+sys.path.append('/home/hcleroy/aging_condensate/Gillespie/Analysis')
 from ToolBox import *
 def weighted_average_energy(Gil, step_tot, compute_steps):
     """
@@ -41,9 +43,9 @@ def weighted_average_energy(Gil, step_tot, compute_steps):
         if move == 1:
             move_1_count += 1
         #weighted_entropy += (prev_entropy-Gil.ell_tot*np.log(np.pi*4)) * time
-        #weighted_energy += ((prev_energy-(Gil.binding_energy * (Gil.get_N_loop()-1)- MinEnt(Gil.Nlinker,Gil.ell_tot)))/
-        #                                        (Gil.ell_tot*np.log(4*np.pi)-MinEnt(Gil.Nlinker,Gil.ell_tot))) * time
-        weighted_energy +=prev_energy*time
+        #weighted_energy += ((prev_energy-(Gil.binding_energy * Gil.Nlinker- Gil.ell_tot*np.log(np.pi*4)))/
+        #                                        (-MinEnt(Gil.Nlinker,Gil.ell_tot)+Gil.ell_tot*np.log(4*np.pi))) * time
+        weighted_energy+=prev_energy*time
         total_weight += time
         prev_energy = Gil.get_F()
         if step % compute_steps == 0:
